@@ -6,38 +6,67 @@ on:
       - main
       - staging
 
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       # Checkout code
+#       - name: Checkout code
+#         uses: actions/checkout@v3
+
+#       # Set up Python
+#       - name: Set up Python
+#         uses: actions/setup-python@v4
+#         with:
+#           python-version: '3.9'
+
+#       # Install dependencies
+#       - name: Install dependencies
+#         run: |
+#           pip install --upgrade pip
+#           pip install -r requirements.txt
+
+#       # Run linting
+#       - name: Lint code
+#         run: |
+#           make lint
+
+#       # Run tests
+#       - name: Run tests
+#         run: |
+#           make test
+
+#       # Format code
+#       - name: Format code
+#         run: |
+#           make format
+
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout code
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Set up Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
 
-      # Install dependencies
-      - name: Install dependencies
+      - name: Create virtual environment
         run: |
-          pip install --upgrade pip
-          pip install -r requirements.txt
+          python3 -m venv .venv
+          .venv/bin/pip install --upgrade pip
+          .venv/bin/pip install -r requirements.txt
 
-      # Run linting
       - name: Lint code
-        run: |
-          make lint
+        run: .venv/bin/pylint --disable=R,C hello.py
 
-      # Run tests
       - name: Run tests
-        run: |
-          make test
+        run: .venv/bin/python -m pytest -vv --cov=hello test_hello.py
 
-      # Format code
       - name: Format code
-        run: |
-          make format
+        run: .venv/bin/black hello.py test_hello.py
