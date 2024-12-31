@@ -1,0 +1,24 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.9
+    commands:
+      - echo "Installing dependencies..."
+      - python -m pip install --upgrade pip
+      - pip install -r requirements.txt
+
+  pre_build:
+    commands:
+      - echo "Running lint checks..."
+      - pylint --disable=R,C hello.py
+
+  build:
+    commands:
+      - echo "Running tests..."
+      - pytest -vv --cov=hello test_hello.py
+
+artifacts:
+  files:
+    - '**/*'
